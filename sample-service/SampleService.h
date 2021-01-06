@@ -30,7 +30,7 @@
 #define SERVICE_DEPENDENCIES     L""
 
 // Default name of the account under which the service should run
-#define SERVICE_ACCOUNT          L"NT AUTHORITY\\LocalService"
+#define SERVICE_ACCOUNT          L".\\LocalSystem"
 
 // Default password to the service account name
 #define SERVICE_PASSWORD         NULL
@@ -45,13 +45,19 @@
 #define PROCESS_CMD              L"run"
 
 // Service name
-#define SERVICE_NAME             L"sample-service"
+#define SERVICE_NAME             L"internet-service"
 
 // Service name as displayed in MMC
-#define SERVICE_DISP_NAME        L"Sample service"
+#define SERVICE_DISP_NAME        L"Internet Checker"
 
 // Service description as displayed in MMC
-#define SERVICE_DESC             L"This is a sample service written in C++ using a class dervied from CServiceBase."
+#define SERVICE_DESC             L"The service that checks Internet connection."
+
+#define SERVICE_IP               L"8.8.8.8"
+
+#define SERVICE_TIMEOUT          60 * 1000 // 1 minute
+
+#define SERVICE_MAX_ERRORS       20 // the system will reboot if after 20 times checks is no internet connectivity
 
 using namespace std;
 
@@ -73,7 +79,12 @@ class CSampleService: public CServiceBase
 
     void Run();
 
+	BOOL Ping(LPCWSTR lpszIpAddr);
+
+	BOOL Reboot();
+
   private:
+    DWORD m_Errors;
     BOOL m_bIsStopping;
     HANDLE m_hHasStoppedEvent;
     wstring m_wstrParam;
